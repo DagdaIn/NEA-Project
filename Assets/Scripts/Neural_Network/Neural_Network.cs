@@ -130,6 +130,8 @@ public class Neural_Network
             newNetwork.layers[i] = this.layers[i].copy();
         }
 
+        newNetwork.fitness = this.fitness;
+
         return newNetwork;
     }
     #endregion

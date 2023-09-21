@@ -26,6 +26,12 @@ public class Evolution_Manager
     public Neural_Network[] NextGeneration()
     {
         Neural_Network[] elites = new Neural_Network[2];
+
+        for (int i = 0; i < networks.Length; i++)
+        {
+            networks[i] = networks[i].copy();
+        }
+
         elites[0] = networks[0].copy();
         elites[1] = networks[1].copy();
 

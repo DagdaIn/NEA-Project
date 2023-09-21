@@ -36,8 +36,10 @@ public class Network_Manager : MonoBehaviour
 
     public void NextGeneration()
     {
+        // This does not
         this.networkGenerationManager.NextGeneration();
 
+        // This works
         for (int i = 0; i < this.vehicles.Length; i++)
         {
             Destroy(this.vehicles[i]);

@@ -357,6 +357,7 @@
 "Assets/Scripts/Neural_Network/Vehicle_Agent.cs"
 "Assets/Scripts/Pause_Menu/Pause_Menu_Script.cs"
 "Assets/Scripts/Player_Control/Vehicle_Control.cs"
+"Assets/Scripts/TimeTrial/ManageTimer.cs"
 "Assets/Scripts/Track_Generation/Testing_Tile_Control.cs"
 "Assets/Scripts/Track_Generation/Track.cs"
 "Assets/Scripts/Track_Generation/Track_Manager_Script.cs"

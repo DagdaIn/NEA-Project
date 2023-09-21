@@ -24,4 +24,9 @@ public class Main_Menu_Script : MonoBehaviour
     {
         SceneManager.LoadScene(3);
     }
+
+    public void LoadTimeTrial()
+    {
+        SceneManager.LoadScene(4);
+    }
 }
