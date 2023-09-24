@@ -6,6 +6,8 @@ public class Track
 {
     int xSize, ySize;
     public Track_Tile[,] trackMap;
+    public string name;
+    public int maxIndex;
 
     public Track(int inxSize, int inySize)
     {

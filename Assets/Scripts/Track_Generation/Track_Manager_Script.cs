@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Unity.VisualScripting;
+using System;
+using System.Linq;
 
 public struct Node
 {
@@ -14,16 +17,16 @@ public class Track_Manager_Script : MonoBehaviour
     private GameObject[,] trackPieces;
     public GameObject trackTile;
     Dictionary<char, int> Walls;
-    private Track track;
+    public List<Track> tracks;
+    public Track track;
 
-    // Start is called before the first frame update
-    void Start()
+    // Awake is called before the first frame update
+    void Awake()
     {
-        // Stores the track as a 7x7 array of Tile prefabs
-        trackPieces = new GameObject[7, 7];
+        this.tracks = new List<Track>();
 
-        // Initialises the track data object
-        this.track = new Track(7, 7);
+        // Stores the tracks as a 7x7 array of Tile prefabs
+        trackPieces = new GameObject[7, 7];
 
         // Converts char direction to integer direction
         Walls = new Dictionary<char, int>()
@@ -35,6 +38,7 @@ public class Track_Manager_Script : MonoBehaviour
         };
 
         InitialiseGraph();
+        LoadAllTracks();
         LoadTrack();
     }
 
@@ -68,7 +72,6 @@ public class Track_Manager_Script : MonoBehaviour
         // Every time it's called, start from a blank slate
         ResetTrack();
 
-        // Creates a new track with max size 7x7
         this.track = new Track(7, 7);
 
         // Starts the track with a length of 1, at (0, 3)
@@ -192,8 +195,15 @@ public class Track_Manager_Script : MonoBehaviour
 
     public void SaveTrack()
     {
-        string path = "./SavedTrack.txt";
-        using (FileStream stream = new FileStream(path, FileMode.Create))
+        this.tracks.Add(this.track);
+        string path = "./SavedTracks.txt";
+
+        if (!File.Exists(path))
+        {
+            File.Create(path);
+        }
+
+        using (FileStream stream = new FileStream(path, FileMode.Append))
         {
             using (StreamWriter sw = new StreamWriter(stream))
             {
@@ -201,9 +211,45 @@ public class Track_Manager_Script : MonoBehaviour
 
                 foreach (string s in toWrite)
                 {
-                    sw.WriteLine(s);
+                    sw.Write($"{s}`");
+                }
+
+                sw.Write($"\n");
+            }
+        }
+    }
+
+    public void LoadAllTracks()
+    {
+        string path = "./SavedTracks.txt";
+        List<List<string>> stringTracks = new List<List<string>>();
+
+        if (!File.Exists(path))
+        {
+            GenerateTrack();
+            return;
+        }
+
+        using (FileStream stream = new FileStream(path, FileMode.Open))
+        {
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                while (!sr.EndOfStream)
+                {
+                    stringTracks.Add(sr.ReadLine().Split('`').ToList());
                 }
             }
+        }
+
+        foreach (List<string> stringTrack in stringTracks)
+        {
+            tracks.Add(LoadTrackFromStringList(stringTrack));
+        }
+
+        if (tracks.Count == 0)
+        {
+            GenerateTrack();
+            return;
         }
     }
 
@@ -223,41 +269,63 @@ public class Track_Manager_Script : MonoBehaviour
         {
             using (StreamReader sr = new StreamReader(stream))
             {
-                while (!sr.EndOfStream)
-                {
-                    result.Add(sr.ReadLine());
-                }
+                result = sr.ReadLine().Split('`').ToList();
             }
         }
 
-        for (int i = 0; i < track.trackMap.GetLength(0); i++)
-        {
-            for (int j = 0; j < track.trackMap.GetLength(1); j++)
-            {
-                foreach (KeyValuePair<char, int> kvp in Walls)
-                {
-                    track.GetPieceByPos(i,j).active_walls[kvp.Key] = result[i * track.trackMap.GetLength(1) + j][kvp.Value] == '1';
-                }
-                track.GetPieceByPos(i,j).setIndex(int.Parse(result[i * track.trackMap.GetLength(1) + j].Split(' ')[1]));
-            }
-        }
+        this.track = LoadTrackFromStringList(result);
 
         RenderTrack();
     }
 
+    private Track LoadTrackFromStringList(List<string> stringTrack)
+    {
+        Track result = new Track(7, 7);
+        for (int i = 0; i < result.trackMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < result.trackMap.GetLength(1); j++)
+            {
+                foreach (KeyValuePair<char, int> kvp in Walls)
+                {
+                    result.GetPieceByPos(i,j).active_walls[kvp.Key] = stringTrack[i * result.trackMap.GetLength(1) + j + 1][kvp.Value] == '1';
+                }
+                result.GetPieceByPos(i,j).setIndex(int.Parse(stringTrack[i * result.trackMap.GetLength(1) + j + 1].Split(' ')[1]));
+            }
+        }
+
+        result.name = stringTrack[0];
+        result.maxIndex = int.Parse(stringTrack[stringTrack.Count - 2]);
+
+        return result;
+    }
+
     private string[] ReturnSaveData(Track track)
     {
-        string[] result = new string[track.trackMap.GetLength(0) * track.trackMap.GetLength(1)];
+        // name -TrackData- maxIndex
+        List<string> result = new List<string>();
+
+        result.Add(GetTrackName());
+
+        int maxIndex = 0;
 
         for (int i = 0; i < track.trackMap.GetLength(0); i++)
         {
             for (int j = 0; j < track.trackMap.GetLength(1); j++)
             {
-                result[i * track.trackMap.GetLength(1) + j] = ReturnActiveWallsAsString(track, i, j) + ' ' + track.GetPieceByPos(i,j).getIndex();
+                result.Add(ReturnActiveWallsAsString(track, i, j) + ' ' + track.GetPieceByPos(i,j).getIndex());
+                maxIndex = Math.Max(maxIndex, track.GetPieceByPos(i,j).getIndex());
             }
         }
 
-        return result;
+        result.Add($"{maxIndex}");
+
+        return result.ToArray();
+    }
+
+    public string GetTrackName()
+    {
+        // Will be reworked into a text entry field
+        return "Test";
     }
 
     private string ReturnActiveWallsAsString(Track track, int x, int y)

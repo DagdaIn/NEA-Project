@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class Vehicle_Control : MonoBehaviour
 {
+    [Header("References")]
+    public GameObject trackManager;
+    public GameObject UIManager;
+
     private bool hasCrashed;
     private float speed;
     private float verticalInput;
     private float horizontalInput;
+    public int lastCheckpoint;
+    private int maxCheckpoint;
+    public bool completedLap;
 
     // Start is called before the first frame update
     void Start()
     {
-        // The vehicle starts stationary
-        this.speed = 0.0f;
-
-        // The vehicle starts at the origin
-        this.transform.position = new Vector3(-30f, 5f, 0f);
+        InitialisePlayer();
     }
 
     // Update is called once per frame
@@ -32,8 +35,34 @@ public class Vehicle_Control : MonoBehaviour
         // Move forward based on speed
         this.transform.position += this.transform.rotation * Vector3.forward * this.speed * Time.deltaTime;
 
+        // Updates its position relative to the track
+        this.updateCheckpoint();
+
         // Stops the vehicle if it has crashed
         checkCrashed();
+    }
+
+    public void InitialisePlayer()
+    {
+        this.maxCheckpoint = trackManager.GetComponent<Track_Manager_Script>().track.maxIndex;
+
+        // The vehicle starts without having passed a checkpoint
+        lastCheckpoint = 0;
+
+        this.completedLap = false;
+        this.verticalInput = 0f;
+        this.horizontalInput = 0f;
+
+        // The vehicle starts stationary
+        this.speed = 0.0f;
+
+        // The vehicle starts at the origin
+        this.transform.position = new Vector3(-30f, 5f, 0f);
+
+        // The vehicle starts facing to the right
+        this.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        this.hasCrashed = false;
     }
 
     // Accelerate, unless the vehicle is at the max velocity
@@ -83,6 +112,34 @@ public class Vehicle_Control : MonoBehaviour
         if (Walls.Contains(other.name))
         {
             this.hasCrashed = true;
+            HandleCrash();
+        }
+    }
+
+    private void HandleCrash()
+    {
+        UIManager.GetComponent<Failure_Menu_Script>().EnableMenu();
+        this.InitialisePlayer();
+    }
+
+    private void updateCheckpoint()
+    {
+        RaycastHit hit;
+        Physics.Raycast(this.transform.position, Quaternion.Euler(90, 0, 0) * Vector3.forward, out hit);
+        // Debug.DrawRay(this.transform.position, Quaternion.Euler(90, 0, 0) * Vector3.forward);
+
+        if (hit.transform.gameObject.name.Split(' ')[1] == (lastCheckpoint + 1).ToString())
+        {
+            lastCheckpoint = int.Parse(hit.transform.gameObject.name.Split(' ')[1]);
+        }
+        else if (hit.transform.gameObject.name.Split(' ')[1] == "1" && lastCheckpoint == this.maxCheckpoint)
+        {
+            lastCheckpoint = int.Parse(hit.transform.gameObject.name.Split(' ')[1]);
+            completedLap = true;
+        }
+        else
+        {
+            lastCheckpoint = int.Parse(hit.transform.gameObject.name.Split(' ')[1]);
         }
     }
 }
