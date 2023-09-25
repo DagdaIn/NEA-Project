@@ -152,7 +152,7 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
-    private void RenderTrack()
+    public void RenderTrack()
     {
         ResetTrack();
         
@@ -204,6 +204,33 @@ public class Track_Manager_Script : MonoBehaviour
         }
 
         using (FileStream stream = new FileStream(path, FileMode.Append))
+        {
+            using (StreamWriter sw = new StreamWriter(stream))
+            {
+                string[] toWrite = ReturnSaveData(this.track);
+
+                foreach (string s in toWrite)
+                {
+                    sw.Write($"{s}`");
+                }
+
+                sw.Write($"\n");
+            }
+        }
+
+        SetTrackAsPlaying();
+    }
+
+    private void SetTrackAsPlaying()
+    {
+        string path = "./SavedTrack.txt";
+
+        if (!File.Exists(path))
+        {
+            File.Create(path);
+        }
+
+        using (FileStream stream = new FileStream(path, FileMode.Open))
         {
             using (StreamWriter sw = new StreamWriter(stream))
             {
@@ -276,6 +303,19 @@ public class Track_Manager_Script : MonoBehaviour
         this.track = LoadTrackFromStringList(result);
 
         RenderTrack();
+    }
+
+    public void SetTrackByName(string searchName)
+    {
+        foreach (Track iTrack in this.tracks)
+        {
+            if (iTrack.name == searchName)
+            {
+                this.track = iTrack;
+            }
+        }
+
+        this.SetTrackAsPlaying();
     }
 
     private Track LoadTrackFromStringList(List<string> stringTrack)

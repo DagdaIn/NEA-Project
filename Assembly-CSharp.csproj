@@ -41,6 +41,7 @@
      <Compile Include="Assets\Scripts\Main_Menu\UserName_Menu_Script.cs" />
      <Compile Include="Assets\Scripts\Neural_Network\GeneticAlgorithmManager.cs" />
      <Compile Include="Assets\Scripts\Track_Generation\Track_Tile.cs" />
+     <Compile Include="Assets\Scripts\Track_Generation\SaveAndLoadMenus.cs" />
      <Compile Include="Assets\Scripts\Camera_Control\Transparent_Objects_In_Front_Of_Camera.cs" />
      <Compile Include="Assets\Scripts\Camera_Control\Follow_Player.cs" />
      <Compile Include="Assets\Scripts\Track_Generation\Track_Manager_Script.cs" />
@@ -54,7 +55,6 @@
      <Compile Include="Assets\Scripts\Pause_Menu\Pause_Menu_Script.cs" />
      <Compile Include="Assets\Scripts\Neural_Network\NetworkCarController.cs" />
      <Compile Include="Assets\Scripts\Leaderboard\Load_Leaderboard.cs" />
-     <Compile Include="Assets\Scripts\Track_Generation\SaveAndLoadMenus.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

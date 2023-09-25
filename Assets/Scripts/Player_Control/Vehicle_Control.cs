@@ -57,10 +57,10 @@ public class Vehicle_Control : MonoBehaviour
         this.speed = 0.0f;
 
         // The vehicle starts at the origin
-        this.transform.position = new Vector3(-30f, 5f, 0f);
+        this.transform.position = new Vector3(-30f, 5f, -5f);
 
         // The vehicle starts facing to the right
-        this.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+        this.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
         this.hasCrashed = false;
     }

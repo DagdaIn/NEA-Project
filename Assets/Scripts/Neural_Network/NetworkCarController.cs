@@ -22,7 +22,7 @@ public class NetworkCarController : MonoBehaviour
     public float distanceMultiplier = 1.4f;
     public float avgSpeedMultiplier = 0.2f;
     public float sensorMultiplier = 0.1f;
-    public float checkpointMultiplier = 1.4f;
+    public float checkpointMultiplier = 10f;
 
     [Header ("Network Options")]
     public int layers = 3;
@@ -124,7 +124,7 @@ public class NetworkCarController : MonoBehaviour
         totalDistanceTravelled += Vector3.Distance(transform.position, lastPosition);
         avgSpeed = totalDistanceTravelled / timeSinceStart;
 
-        overallFitness = /*(totalDistanceTravelled * distanceMultiplier) + */ (avgSpeed * avgSpeedMultiplier) + (((ASensor + BSensor + CSensor + DSensor + ESensor) / 5) * sensorMultiplier) + (numCheckpointsPassed * checkpointMultiplier);
+        overallFitness = /*(totalDistanceTravelled * distanceMultiplier) + */ (avgSpeed * avgSpeedMultiplier) + /* (((ASensor + BSensor + CSensor + DSensor + ESensor) / 5) * sensorMultiplier) + */ (numCheckpointsPassed * checkpointMultiplier);
 
         if (timeSinceStart > 20 && overallFitness < 40)
         {
@@ -212,6 +212,6 @@ public class NetworkCarController : MonoBehaviour
         input = transform.TransformDirection(input);
         transform.position += input;
 
-        transform.eulerAngles += new Vector3(0, h * 90 * 0.05f, 0);
+        transform.eulerAngles += new Vector3(0, h * 90 * 0.02f, 0);
     }
 }
