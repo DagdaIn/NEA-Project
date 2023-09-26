@@ -2,8 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using MathNet.Numerics.LinearAlgebra;
 using Random = UnityEngine.Random;
+
+[System.Serializable]
+public struct NetworkData
+{
+    public void SetData(NeuralNetwork network)
+    {
+        this.inputLayer = network.inputLayer;
+        this.hiddenLayers = network.hiddenLayers;
+        this.outputLayer = network.outputLayer;
+        this.weights = network.weights;
+        this.biases = network.biases;
+    }
+
+    public Matrix<float> inputLayer;
+    public List<Matrix<float>> hiddenLayers;
+    public Matrix<float> outputLayer;
+    public List<Matrix<float>> weights;
+    public List<float> biases;
+}
 
 public class NeuralNetwork
 {
@@ -50,6 +70,26 @@ public class NeuralNetwork
         biases.Add(Random.Range(-1f, 1f));
 
         RandomiseWeights();
+    }
+
+    public void SaveNetwork()
+    {
+        NetworkData data = new NetworkData();
+        data.SetData(this);
+        string stringData = JsonUtility.ToJson(data);
+        System.IO.File.WriteAllText(Application.persistentDataPath + "/NetworkData.json", stringData);
+    }
+
+    public void LoadNetwork()
+    {
+        string stringData;
+        using (StreamReader sr = new StreamReader("NetworkData.json"))
+        {
+            stringData = sr.ReadToEnd();
+        }
+
+        NetworkData data = new NetworkData();
+        data = JsonUtility.FromJson<NetworkData>(stringData);
     }
 
     public NeuralNetwork InitialiseCopy(int hiddenLayerCount, int hiddenNeuronCount)

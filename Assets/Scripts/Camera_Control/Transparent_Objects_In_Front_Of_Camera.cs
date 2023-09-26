@@ -4,7 +4,8 @@ using UnityEngine;
 
 // When enabled, objects must have transparent material
 // This causes the meshes to collide and render weirdly
-// Hence I opted not to turn this code on
+// Hence I opted not to turn this code on and instead 
+// Decided to make it so the walls are shorter.
 public class Transparent_Objects_In_Front_Of_Camera : MonoBehaviour
 {
     [SerializeField] private List<GameObject> transparentObjects;

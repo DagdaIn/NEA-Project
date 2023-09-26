@@ -7,7 +7,10 @@ using UnityEngine;
 public class Follow_Player : MonoBehaviour
 {
     #region public variables
+    [Header("References")]
     public GameObject player;
+
+    [Header("Position")]
     public Vector3 displacement;
     public bool followRotation;
     #endregion
