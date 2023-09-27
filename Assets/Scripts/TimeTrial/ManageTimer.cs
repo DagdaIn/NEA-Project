@@ -23,7 +23,10 @@ public class ManageTimer : MonoBehaviour
     private float raceTimer;
     private UpdateTimer timerManager;
 
+    #endregion
 
+    #region delegates
+    private delegate void UpdateTimer();
     #endregion
 
     #region MonoBehaviourSubroutines
@@ -49,28 +52,44 @@ public class ManageTimer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Restarts the timer
+    /// </summary>
     public void ResetTimer()
     {
         InitialiseTimer();
     }
 
+    /// <summary>
+    /// Starts increasing the timer
+    /// </summary>
     private void StartTimer()
     {
         timerManager = IncreaseTimer;
     }
 
+    /// <summary>
+    /// Increases the timer by time.deltaTime every frame, and writes the new time to the screen
+    /// </summary>
     private void IncreaseTimer()
     {
         raceTimer += Time.deltaTime;
         timerText.GetComponent<TextMeshProUGUI>().SetText($"<mspace=0.7em>{TimeSpan.FromSeconds(raceTimer):g}".PadRight(22,'.').PadRight(25, '0'));
     }
 
+    /// <summary>
+    /// Sets the value of the timer to 0, and writes to the screen
+    /// </summary>
     private void InitialiseTimer()
     {
         raceTimer = 0f;
         timerText.GetComponent<TextMeshProUGUI>().SetText($"<mspace=0.7em>{TimeSpan.FromSeconds(raceTimer):g}".PadRight(22, '.').PadRight(25, '0'));
     }
 
+    /// <summary>
+    /// Saves the current timer value to "Leaderboard.txt"
+    /// </summary>
+    /// <param name="time">The float representing the lap time, in seconds</param>
     private void SaveTime(float time)
     {
         PlayerData thisPlayer = ReadPlayerData();
@@ -92,6 +111,10 @@ public class ManageTimer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reads in the current player data from "PlayerData.txt"
+    /// </summary>
+    /// <returns>A PlayerData object containing all the player data</returns>
     private PlayerData ReadPlayerData()
     {
         PlayerData data = new PlayerData();
@@ -112,8 +135,6 @@ public class ManageTimer : MonoBehaviour
 
         return data;
     }
-
-    private delegate void UpdateTimer();
     #endregion
 
     

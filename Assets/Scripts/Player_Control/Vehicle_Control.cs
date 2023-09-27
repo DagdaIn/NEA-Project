@@ -1,28 +1,40 @@
+#region includes
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#endregion
 
 public class Vehicle_Control : MonoBehaviour
 {
+    #region Public Variables
     [Header("References")]
     public GameObject trackManager;
     public GameObject UIManager;
 
+    [Header("Lap completion")]
+    public bool completedLap;
+    public int lastCheckpoint;
+    #endregion
+
+    #region Private Variables
     private bool hasCrashed;
     private float speed;
     private float verticalInput;
     private float horizontalInput;
-    public int lastCheckpoint;
     private int maxCheckpoint;
-    public bool completedLap;
+    #endregion
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Sets up the object to default values before the first frame
+    /// </summary>
     void Start()
     {
         InitialisePlayer();
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Handles inputs at a regular intervale
+    /// </summary>
     void FixedUpdate()
     {
         // Handle taking player control
@@ -42,6 +54,9 @@ public class Vehicle_Control : MonoBehaviour
         checkCrashed();
     }
 
+    /// <summary>
+    /// Reverts the player back to default values
+    /// </summary>
     public void InitialisePlayer()
     {
         this.maxCheckpoint = trackManager.GetComponent<Track_Manager_Script>().track.maxIndex;
@@ -65,12 +80,24 @@ public class Vehicle_Control : MonoBehaviour
         this.hasCrashed = false;
     }
 
-    // Accelerate, unless the vehicle is at the max velocity
+    /// <summary>
+    /// Attempts to accelerate the vehicle, unless it's already at max speed
+    /// </summary>
+    /// <param name="inputMultiplier">The value of the user input</param>
     void accelerate(float inputMultiplier)
     {
         // Two values that represent the rate of acceleration, and max velocity respectively
         float accelerationConstant = 0.2f;
         float maxSpeed = 10.0f;
+
+        // Needs to be altered to feel good
+        float deceleration = 0.04f;
+
+        // The vehicle slows down if the user isn't inputting
+        if (inputMultiplier == 0)
+        {
+            this.speed -= deceleration;
+        }
 
         // Updates the speed
         this.speed += accelerationConstant * inputMultiplier;
@@ -80,7 +107,10 @@ public class Vehicle_Control : MonoBehaviour
         this.speed = Mathf.Max(this.speed, -maxSpeed);
     }
 
-    // Rotate the vehicle based on user input
+    /// <summary>
+    /// Rotates the vehicle for turns
+    /// </summary>
+    /// <param name="inputMultiplier">The horizontal user input</param>
     void turn(float inputMultiplier)
     {
         // Sets a value that represents how quickly the vehicle should turn
@@ -90,7 +120,11 @@ public class Vehicle_Control : MonoBehaviour
         this.transform.Rotate(new Vector3(0, turnConstant * inputMultiplier, 0), Space.Self);
     }
 
-    // Stops vehicle when it has crashed
+    // Obsolete
+    /*
+    /// <summary>
+    /// Checks if the vehicle has crashed, and if it has, then disables the object
+    /// </summary>
     private void checkCrashed()
     {
         if (this.hasCrashed)
@@ -98,8 +132,12 @@ public class Vehicle_Control : MonoBehaviour
             this.gameObject.GetComponent<Vehicle_Control>().enabled = false;
         }
     }
+    */
 
-    // Calculates whether the vehicle has crashed in to a wall
+    /// <summary>
+    /// When the vehicle collides with a wall, sets hasCrashed to true
+    /// </summary>
+    /// <param name="other">The collider of the object that the vehicle collided with</param>
     void OnTriggerEnter(Collider other)
     {
         List<string> Walls = new List<string>()
@@ -116,12 +154,19 @@ public class Vehicle_Control : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// When it has crashed, enables the failure menu, and resets the player
+    /// </summary>
     private void HandleCrash()
     {
         UIManager.GetComponent<Failure_Menu_Script>().EnableMenu();
         this.InitialisePlayer();
     }
 
+    /// <summary>
+    /// Casts a ray downwards, and if the floor is a higher position, updates the vehicles position
+    /// around the track.
+    /// </summary>
     private void updateCheckpoint()
     {
         RaycastHit hit;
