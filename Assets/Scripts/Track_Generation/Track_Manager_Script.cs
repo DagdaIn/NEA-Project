@@ -1,3 +1,4 @@
+#region includes
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using System.IO;
 using Unity.VisualScripting;
 using System;
 using System.Linq;
+#endregion
 
 public struct Node
 {
@@ -14,11 +16,18 @@ public struct Node
 
 public class Track_Manager_Script : MonoBehaviour
 {
-    private GameObject[,] trackPieces;
+    #region Public Variables
+    [Header("References")]
     public GameObject trackTile;
-    Dictionary<char, int> Walls;
+    
     public List<Track> tracks;
     public Track track;
+    #endregion
+
+    #region Private Variables
+    private GameObject[,] trackPieces;
+    private Dictionary<char, int> Walls;
+    #endregion
 
     // Awake is called before the first frame update
     void Awake()
@@ -42,7 +51,9 @@ public class Track_Manager_Script : MonoBehaviour
         LoadTrack();
     }
 
-    // Sets every index of trackPieces to be an instance of the trackTile object
+    /// <summary>
+    /// Instantiates all trackPieces
+    /// </summary>
     private void InitialiseGraph()
     {
         for (int i = 0; i < trackPieces.GetLength(0); i++)
@@ -55,7 +66,9 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
-    // Activates all tiles again
+    /// <summary>
+    /// Resets all tiles, so they are fully active
+    /// </summary>
     private void ResetTrack()
     {
         for (int i = 0; i < trackPieces.GetLength(0); i++)
@@ -67,6 +80,9 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Randomly generates a track using a random walk algorithm
+    /// </summary>
     public void GenerateTrack()
     {
         // Every time it's called, start from a blank slate
@@ -152,6 +168,10 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates all trackTiles so the current track is updated to the contents of the Track data
+    /// structure
+    /// </summary>
     public void RenderTrack()
     {
         ResetTrack();
@@ -178,6 +198,12 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the direction from a tile based on the int representing the direction
+    /// </summary>
+    /// <param name="dict">Dictionary of what tiles are in each direction</param>
+    /// <param name="n">The enumeration of the direction</param>
+    /// <returns>The direction as a cardinal direction</returns>
     private char GetDirection(Dictionary<char, Track_Tile> dict, int n)
     {
         int i = 0;
@@ -193,6 +219,9 @@ public class Track_Manager_Script : MonoBehaviour
         return ' ';
     }
 
+    /// <summary>
+    /// Saves the track to "SavedTracks.txt"
+    /// </summary>
     public void SaveTrack()
     {
         this.tracks.Add(this.track);
@@ -221,6 +250,9 @@ public class Track_Manager_Script : MonoBehaviour
         SetTrackAsPlaying();
     }
 
+    /// <summary>
+    /// Loads a given track into "SavedTrack.txt", hence specifying it as the current track
+    /// </summary>
     private void SetTrackAsPlaying()
     {
         string path = "./SavedTrack.txt";
@@ -246,6 +278,9 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads all tracks in "SavedTracks.txt" into the list of tracks
+    /// </summary>
     public void LoadAllTracks()
     {
         string path = "./SavedTracks.txt";
@@ -280,6 +315,9 @@ public class Track_Manager_Script : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads the track in "SavedTrack.txt"
+    /// </summary>
     public void LoadTrack()
     {
         string path = "./SavedTrack.txt";
@@ -305,6 +343,10 @@ public class Track_Manager_Script : MonoBehaviour
         RenderTrack();
     }
 
+    /// <summary>
+    /// Sets the played track as the track with the specified name
+    /// </summary>
+    /// <param name="searchName">The name of the track to be played</param>
     public void SetTrackByName(string searchName)
     {
         foreach (Track iTrack in this.tracks)
@@ -318,6 +360,11 @@ public class Track_Manager_Script : MonoBehaviour
         this.SetTrackAsPlaying();
     }
 
+    /// <summary>
+    /// Loads a track data object based on a list of string specifying its parameters
+    /// </summary>
+    /// <param name="stringTrack">A track object represented as a string list</param>
+    /// <returns>A Track data object</returns>
     private Track LoadTrackFromStringList(List<string> stringTrack)
     {
         Track result = new Track(7, 7);
