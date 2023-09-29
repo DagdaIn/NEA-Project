@@ -36,7 +36,10 @@ public class Pause_Menu_Script : MonoBehaviour
     /// </summary>
     void Update()
     {
-        toggleMenu();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            toggleMenu();
+        }
     }
  
     /// <summary>

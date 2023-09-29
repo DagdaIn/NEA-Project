@@ -17,7 +17,6 @@ public class Vehicle_Control : MonoBehaviour
     #endregion
 
     #region Private Variables
-    private bool hasCrashed;
     private float speed;
     private float verticalInput;
     private float horizontalInput;
@@ -49,9 +48,6 @@ public class Vehicle_Control : MonoBehaviour
 
         // Updates its position relative to the track
         this.updateCheckpoint();
-
-        // Stops the vehicle if it has crashed
-        checkCrashed();
     }
 
     /// <summary>
@@ -76,8 +72,6 @@ public class Vehicle_Control : MonoBehaviour
 
         // The vehicle starts facing to the right
         this.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-
-        this.hasCrashed = false;
     }
 
     /// <summary>
@@ -149,7 +143,6 @@ public class Vehicle_Control : MonoBehaviour
         };
         if (Walls.Contains(other.name))
         {
-            this.hasCrashed = true;
             HandleCrash();
         }
     }

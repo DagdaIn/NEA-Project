@@ -1,3 +1,4 @@
+#region includes
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,9 @@ using System;
 using System.IO;
 using MathNet.Numerics.LinearAlgebra;
 using Random = UnityEngine.Random;
+#endregion
 
+#region Save Data
 [System.Serializable]
 public struct NetworkData
 {
@@ -24,9 +27,11 @@ public struct NetworkData
     public List<Matrix<float>> weights;
     public List<float> biases;
 }
+#endregion
 
 public class NeuralNetwork
 {
+    #region Public Variables
     public Matrix<float> inputLayer = Matrix<float>.Build.Dense(1, 5);
 
     public List<Matrix<float>> hiddenLayers = new List<Matrix<float>>();
@@ -36,9 +41,14 @@ public class NeuralNetwork
     public List<Matrix<float>> weights = new List<Matrix<float>>();
 
     public List<float> biases = new List<float>();
-
     public float fitness;
+    #endregion
 
+    /// <summary>
+    /// Sets all values of the network to their defaults
+    /// </summary>
+    /// <param name="hiddenLayerCount">The number of hidden layers</param>
+    /// <param name="hiddenNeuronCount">The number of neurons per hidden layer</param>
     public void Initialise(int hiddenLayerCount, int hiddenNeuronCount)
     {
         inputLayer.Clear();
@@ -72,6 +82,10 @@ public class NeuralNetwork
         RandomiseWeights();
     }
 
+    /// <summary>
+    /// Saves the network to "NetworkData.json" 
+    /// -- To be implemented -- 
+    /// </summary>
     public void SaveNetwork()
     {
         NetworkData data = new NetworkData();
@@ -80,6 +94,10 @@ public class NeuralNetwork
         System.IO.File.WriteAllText(Application.persistentDataPath + "/NetworkData.json", stringData);
     }
 
+    /// <summary>
+    /// Loads the network stored in "NetworkData.json"
+    /// -- To be implemented --
+    /// </summary>
     public void LoadNetwork()
     {
         string stringData;
@@ -92,6 +110,12 @@ public class NeuralNetwork
         data = JsonUtility.FromJson<NetworkData>(stringData);
     }
 
+    /// <summary>
+    /// Creates a copy of this network
+    /// </summary>
+    /// <param name="hiddenLayerCount">The number of hidden layers</param>
+    /// <param name="hiddenNeuronCount">The number of nodes in each hidden layer</param>
+    /// <returns>A neural network identical to this one</returns>
     public NeuralNetwork InitialiseCopy(int hiddenLayerCount, int hiddenNeuronCount)
     {
         NeuralNetwork newNet = new NeuralNetwork();
@@ -125,6 +149,11 @@ public class NeuralNetwork
         return newNet;
     }
 
+    /// <summary>
+    /// Sets up the hidden layers of the network
+    /// </summary>
+    /// <param name="hiddenLayerCount">The number of hidden layers</param>
+    /// <param name="hiddenNeuronCount">The number of neurons per hidden layer</param>
     public void InitialiseHidden(int hiddenLayerCount, int hiddenNeuronCount)
     {
         inputLayer.Clear();
@@ -138,6 +167,9 @@ public class NeuralNetwork
         }
     }
 
+    /// <summary>
+    /// Randomly assigns the weights of this network
+    /// </summary>
     public void RandomiseWeights()
     {
         for (int i = 0; i < weights.Count; i++)
@@ -152,13 +184,17 @@ public class NeuralNetwork
         }
     }
 
-    public (float, float) RunNetwork (float a, float b, float c, float d, float e)
+    /// <summary>
+    /// Takes in a float array as an input, and runs the network
+    /// </summary>
+    /// <param name="inputs">The inputs to the first layer of the network</param>
+    /// <returns>Two floats representing the outputs of the network</returns>
+    public (float, float) RunNetwork (float[] inputs)
     {
-        inputLayer[0,0] = a;
-        inputLayer[0,1] = b;
-        inputLayer[0,2] = c;
-        inputLayer[0,3] = d;
-        inputLayer[0,4] = e;
+        for (int i = 0; i < 5; i++)
+        {
+            inputLayer[0, i] = inputs[i];
+        }
 
         inputLayer = inputLayer.PointwiseTanh();
 
@@ -175,8 +211,13 @@ public class NeuralNetwork
         return (Sigmoid(outputLayer[0, 0]), (float)Math.Tanh(outputLayer[0, 1]));
     }
 
-    private float Sigmoid (float f)
+    /// <summary>
+    /// The sigmoid activation function
+    /// </summary>
+    /// <param name="input">The value to be activated</param>
+    /// <returns>The activated value (between -1 and 1)</returns>
+    private float Sigmoid (float input)
     {
-        return (1/(1 + Mathf.Exp(-f)));
+        return (1/(1 + Mathf.Exp(-input)));
     }
 }
