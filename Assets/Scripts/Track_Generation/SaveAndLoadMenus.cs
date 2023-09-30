@@ -21,7 +21,6 @@ public class SaveAndLoadMenus : MonoBehaviour
     public List<Track> allTracks;
     #endregion
 
-
     void Start()
     {
         this.allTracks = TrackManager.GetComponent<Track_Manager_Script>().tracks;

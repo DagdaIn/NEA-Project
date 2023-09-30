@@ -72,8 +72,8 @@ public class GeneticAlgorithmManager : MonoBehaviour
     /// <summary>
     /// Moves on to the network after the current network
     /// </summary>
-    /// <param name="fitness"></param>
-    /// <param name="network"></param>
+    /// <param name="fitness">The current fitness of this network</param>
+    /// <param name="network">The current network</param>
     public void Death(float fitness, NeuralNetwork network)
     {
         if (currentGenome < population.Length - 1)

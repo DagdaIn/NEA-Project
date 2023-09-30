@@ -40,8 +40,7 @@ public class Vehicle_Control : MonoBehaviour
         verticalInput = Input.GetAxis("Vertical");
         horizontalInput = Input.GetAxis("Horizontal");
 
-        accelerate(verticalInput);
-        turn(horizontalInput);
+        Move(verticalInput, horizontalInput);
 
         // Move forward based on speed
         this.transform.position += this.transform.rotation * Vector3.forward * this.speed * Time.deltaTime;
@@ -75,43 +74,21 @@ public class Vehicle_Control : MonoBehaviour
     }
 
     /// <summary>
-    /// Attempts to accelerate the vehicle, unless it's already at max speed
+    /// Moves the vehicle forward and turns the vehicle
     /// </summary>
-    /// <param name="inputMultiplier">The value of the user input</param>
-    void accelerate(float inputMultiplier)
+    /// <param name="verticalInput">Forward/Backward input</param>
+    /// <param name="horizontalInput">Left/Right input</param>
+    private void Move(float verticalInput, float horizontalInput)
     {
-        // Two values that represent the rate of acceleration, and max velocity respectively
-        float accelerationConstant = 0.2f;
-        float maxSpeed = 10.0f;
+        Vector3 input;
+        // Linearly interpolates between current position, by an amount based on forward input
+        input = Vector3.Lerp(Vector3.zero, new Vector3(0, 0, verticalInput*11.4f), 0.02f);
+        input = transform.TransformDirection(input);
+        transform.position += input;
 
-        // Needs to be altered to feel good
-        float deceleration = 0.04f;
-
-        // The vehicle slows down if the user isn't inputting
-        if (inputMultiplier == 0)
-        {
-            this.speed -= deceleration;
-        }
-
-        // Updates the speed
-        this.speed += accelerationConstant * inputMultiplier;
-
-        // Ensures that the vehicle is not going too fast forwards OR backwards
-        this.speed = Mathf.Min(this.speed, maxSpeed);
-        this.speed = Mathf.Max(this.speed, -maxSpeed);
-    }
-
-    /// <summary>
-    /// Rotates the vehicle for turns
-    /// </summary>
-    /// <param name="inputMultiplier">The horizontal user input</param>
-    void turn(float inputMultiplier)
-    {
-        // Sets a value that represents how quickly the vehicle should turn
-        float turnConstant = 2.0f;
-
-        // Turns the vehicle
-        this.transform.Rotate(new Vector3(0, turnConstant * inputMultiplier, 0), Space.Self);
+        // Rotates the vehicle
+        transform.eulerAngles += new Vector3(0, (horizontalInput * 90) * 0.02f, 0);
+    
     }
 
     // Obsolete

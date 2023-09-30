@@ -354,6 +354,7 @@ public class Track_Manager_Script : MonoBehaviour
             if (iTrack.name == searchName)
             {
                 this.track = iTrack;
+                break;
             }
         }
 

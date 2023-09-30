@@ -44,44 +44,7 @@ public class NeuralNetwork
     public float fitness;
     #endregion
 
-    /// <summary>
-    /// Sets all values of the network to their defaults
-    /// </summary>
-    /// <param name="hiddenLayerCount">The number of hidden layers</param>
-    /// <param name="hiddenNeuronCount">The number of neurons per hidden layer</param>
-    public void Initialise(int hiddenLayerCount, int hiddenNeuronCount)
-    {
-        inputLayer.Clear();
-        hiddenLayers.Clear();
-        outputLayer.Clear();
-        weights.Clear();
-        biases.Clear();
-
-        for (int i = 0; i < hiddenLayerCount + 1; i++)
-        {
-            Matrix<float> f = Matrix<float>.Build.Dense(1, hiddenNeuronCount);
-
-            hiddenLayers.Add(f);
-
-            biases.Add(Random.Range(-1f, 1f));
-
-            if (i == 0)
-            {
-                Matrix<float> inputToH1 = Matrix<float>.Build.Dense(5, hiddenNeuronCount);
-                weights.Add(inputToH1);
-            }
-
-            Matrix<float> HiddenToHidden = Matrix<float>.Build.Dense(hiddenNeuronCount, hiddenNeuronCount);
-            weights.Add(HiddenToHidden);
-        }
-
-        Matrix<float> OutputWeight = Matrix<float>.Build.Dense(hiddenNeuronCount, 2);
-        weights.Add(OutputWeight);
-        biases.Add(Random.Range(-1f, 1f));
-
-        RandomiseWeights();
-    }
-
+    #region Saving
     /// <summary>
     /// Saves the network to "NetworkData.json" 
     /// -- To be implemented -- 
@@ -109,7 +72,9 @@ public class NeuralNetwork
         NetworkData data = new NetworkData();
         data = JsonUtility.FromJson<NetworkData>(stringData);
     }
+    #endregion
 
+    #region Initialisation
     /// <summary>
     /// Creates a copy of this network
     /// </summary>
@@ -166,6 +131,45 @@ public class NeuralNetwork
             hiddenLayers.Add(newHiddenLayer);
         }
     }
+    
+        /// <summary>
+    /// Sets all values of the network to their defaults
+    /// </summary>
+    /// <param name="hiddenLayerCount">The number of hidden layers</param>
+    /// <param name="hiddenNeuronCount">The number of neurons per hidden layer</param>
+    public void Initialise(int hiddenLayerCount, int hiddenNeuronCount)
+    {
+        inputLayer.Clear();
+        hiddenLayers.Clear();
+        outputLayer.Clear();
+        weights.Clear();
+        biases.Clear();
+
+        for (int i = 0; i < hiddenLayerCount + 1; i++)
+        {
+            Matrix<float> f = Matrix<float>.Build.Dense(1, hiddenNeuronCount);
+
+            hiddenLayers.Add(f);
+
+            biases.Add(Random.Range(-1f, 1f));
+
+            if (i == 0)
+            {
+                Matrix<float> inputToH1 = Matrix<float>.Build.Dense(5, hiddenNeuronCount);
+                weights.Add(inputToH1);
+            }
+
+            Matrix<float> HiddenToHidden = Matrix<float>.Build.Dense(hiddenNeuronCount, hiddenNeuronCount);
+            weights.Add(HiddenToHidden);
+        }
+
+        Matrix<float> OutputWeight = Matrix<float>.Build.Dense(hiddenNeuronCount, 2);
+        weights.Add(OutputWeight);
+        biases.Add(Random.Range(-1f, 1f));
+
+        RandomiseWeights();
+    }
+    #endregion
 
     /// <summary>
     /// Randomly assigns the weights of this network
@@ -184,6 +188,7 @@ public class NeuralNetwork
         }
     }
 
+    #region Forward Propagation
     /// <summary>
     /// Takes in a float array as an input, and runs the network
     /// </summary>
@@ -220,4 +225,5 @@ public class NeuralNetwork
     {
         return (1/(1 + Mathf.Exp(-input)));
     }
+    #endregion
 }

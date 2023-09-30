@@ -135,7 +135,5 @@ public class ManageTimer : MonoBehaviour
 
         return data;
     }
-    #endregion
-
-    
+    #endregion  
 }
