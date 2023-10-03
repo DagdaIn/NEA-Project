@@ -82,7 +82,41 @@ public class Vehicle_Control : MonoBehaviour
         };
         if (Walls.Contains(other.name))
         {
+<<<<<<< Updated upstream
             this.hasCrashed = true;
+=======
+            HandleCrash();
+        }
+    }
+
+    /// <summary>
+    /// When it has crashed, enables the failure menu, and resets the player
+    /// </summary>
+    private void HandleCrash()
+    {
+        UIManager.GetComponent<Failure_Menu_Script>().EnableMenu();
+        this.InitialisePlayer();
+    }
+
+    /// <summary>
+    /// Casts a ray downwards, and if the floor is a higher position, updates the vehicles position
+    /// around the track.
+    /// </summary>
+    private void updateCheckpoint()
+    {
+        RaycastHit hit;
+        Physics.Raycast(this.transform.position, Quaternion.Euler(90, 0, 0) * Vector3.forward, out hit);
+        // Debug.DrawRay(this.transform.position, Quaternion.Euler(90, 0, 0) * Vector3.forward);
+
+        if (hit.transform.gameObject.name.Split(' ')[1] == (lastCheckpoint + 1).ToString())
+        {
+            lastCheckpoint = int.Parse(hit.transform.gameObject.name.Split(' ')[1]);
+        }
+        else if (hit.transform.gameObject.name.Split(' ')[1] == "1" && lastCheckpoint == this.maxCheckpoint)
+        {
+            lastCheckpoint = int.Parse(hit.transform.gameObject.name.Split(' ')[1]);
+            completedLap = true;
+>>>>>>> Stashed changes
         }
     }
 }
