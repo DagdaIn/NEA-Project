@@ -8,29 +8,9 @@ using MathNet.Numerics.LinearAlgebra;
 using Random = UnityEngine.Random;
 #endregion
 
-#region Save Data
-[System.Serializable]
-public struct NetworkData
-{
-    public void SetData(NeuralNetwork network)
-    {
-        this.inputLayer = network.inputLayer;
-        this.hiddenLayers = network.hiddenLayers;
-        this.outputLayer = network.outputLayer;
-        this.weights = network.weights;
-        this.biases = network.biases;
-    }
-
-    public Matrix<float> inputLayer;
-    public List<Matrix<float>> hiddenLayers;
-    public Matrix<float> outputLayer;
-    public List<Matrix<float>> weights;
-    public List<float> biases;
-}
-#endregion
-
 public class NeuralNetwork
 {
+    // Using the NuGet Maths package allows for matrices to be built in, so I don't have to worry about bugs in the matrix
     #region Public Variables
     public Matrix<float> inputLayer = Matrix<float>.Build.Dense(1, 5);
 
@@ -42,36 +22,6 @@ public class NeuralNetwork
 
     public List<float> biases = new List<float>();
     public float fitness;
-    #endregion
-
-    #region Saving
-    /// <summary>
-    /// Saves the network to "NetworkData.json" 
-    /// -- To be implemented -- 
-    /// </summary>
-    public void SaveNetwork()
-    {
-        NetworkData data = new NetworkData();
-        data.SetData(this);
-        string stringData = JsonUtility.ToJson(data);
-        System.IO.File.WriteAllText(Application.persistentDataPath + "/NetworkData.json", stringData);
-    }
-
-    /// <summary>
-    /// Loads the network stored in "NetworkData.json"
-    /// -- To be implemented --
-    /// </summary>
-    public void LoadNetwork()
-    {
-        string stringData;
-        using (StreamReader sr = new StreamReader("NetworkData.json"))
-        {
-            stringData = sr.ReadToEnd();
-        }
-
-        NetworkData data = new NetworkData();
-        data = JsonUtility.FromJson<NetworkData>(stringData);
-    }
     #endregion
 
     #region Initialisation

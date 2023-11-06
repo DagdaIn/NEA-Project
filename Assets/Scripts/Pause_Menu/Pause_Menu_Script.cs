@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 #endregion
 
 public class Pause_Menu_Script : MonoBehaviour
@@ -10,12 +11,15 @@ public class Pause_Menu_Script : MonoBehaviour
     #region Public Variables
     [Header("References")]
     public GameObject PauseMenuUI;
+    public GameObject NetworkOptionsUI;
+    public GameObject TimeScaleUI;
+    public GameObject player;
 
     public static bool GamePaused = false;
     #endregion
 
     #region Private Variables
-    TogglePauseMenu toggleMenu;
+    TogglePauseMenu togglePause;
     #endregion
 
     #region Delegates
@@ -38,7 +42,7 @@ public class Pause_Menu_Script : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            toggleMenu();
+            togglePause();
         }
     }
  
@@ -47,10 +51,12 @@ public class Pause_Menu_Script : MonoBehaviour
     /// </summary>
     public void Resume()
     {
+        DisableOptionsMenu();
         PauseMenuUI.SetActive(false);
+        TimeScaleUI.SetActive(true);
         Time.timeScale = 1f;
         GamePaused = false;
-        toggleMenu = Pause;
+        togglePause = Pause;
     }
 
     /// <summary>
@@ -58,10 +64,12 @@ public class Pause_Menu_Script : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        DisablePlayer();
         PauseMenuUI.SetActive(true);
+        TimeScaleUI.SetActive(false);
         Time.timeScale = 0f;
         GamePaused = true;
-        toggleMenu = Resume;
+        togglePause = Resume;
     }
 
     /// <summary>
@@ -80,5 +88,36 @@ public class Pause_Menu_Script : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Activates the options menu
+    /// </summary>
+    public void EnableOptionsMenu()
+    {
+        NetworkOptionsUI.SetActive(true);
+        PauseMenuUI.SetActive(false);
+        togglePause = DisableOptionsMenu;
+    }
+
+    /// <summary>
+    /// Deactivates the options menu
+    /// </summary>
+    public void DisableOptionsMenu()
+    {
+        NetworkOptionsUI.SetActive(false);
+        PauseMenuUI.SetActive(true);
+        togglePause = EnableOptionsMenu;
+    }
+
+    public void EnablePlayer()
+    {
+        player.SetActive(true);
+        player.GetComponent<Vehicle_Control>().InitialisePlayer();
+    }
+
+    public void DisablePlayer()
+    {
+        player.SetActive(false);
     }
 }

@@ -82,7 +82,7 @@ public class Vehicle_Control : MonoBehaviour
     {
         Vector3 input;
         // Linearly interpolates between current position, by an amount based on forward input
-        input = Vector3.Lerp(Vector3.zero, new Vector3(0, 0, verticalInput*11.4f), 0.02f);
+        input = Vector3.Lerp(Vector3.zero, new Vector3(0, 0, verticalInput*10f), 0.02f);
         input = transform.TransformDirection(input);
         transform.position += input;
 

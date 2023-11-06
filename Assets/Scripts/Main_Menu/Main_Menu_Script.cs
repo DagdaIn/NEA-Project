@@ -26,6 +26,7 @@ public class Main_Menu_Script : MonoBehaviour
     /// </summary>
     public void Play()
     {
+
         SceneManager.LoadScene(1);
     }
 

@@ -121,11 +121,13 @@ public class Load_Leaderboard : MonoBehaviour
     public void WriteTopTimesToLeaderboard(List<LeaderboardTime> times)
     {
         string text = "";
+        string temp = "";
 
         for (int i = 0; i < times.Count; i++)
         {
-            text = $"{TimeSpan.FromSeconds(times[i].time)}".Substring(0, 12);
-            text = $"{i + 1}) {text}\n";
+            temp = $"{TimeSpan.FromSeconds(times[i].time)}";
+            text = temp.Length > 12 ? temp.Substring(0, 12) : temp;
+            text = $"{i}) {text}\n";
         }
 
         LeaderboardText.GetComponent<TextMeshProUGUI>().SetText(text);

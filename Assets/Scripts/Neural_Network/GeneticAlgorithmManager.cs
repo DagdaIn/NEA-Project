@@ -16,12 +16,13 @@ public class GeneticAlgorithmManager : MonoBehaviour
     public NetworkCarController controller;
 
     [Header("Controls")]
-    public int initialPopulation = 85;
+    public int initialPopulation = 100;
+
     [Range(0.0f, 1.0f)]
-    public float mutationRate = 0.055f;
+    public float mutationRate = 0.05f;
 
     [Header("Crossover Controls")]
-    public int bestAgentSelection = 8;
+    public int bestAgentSelection = 10;
     public int worstAgentSelection = 0;
     public int numberToCrossover;
 
@@ -56,7 +57,7 @@ public class GeneticAlgorithmManager : MonoBehaviour
         population = new NeuralNetwork[initialPopulation];
 
         FillPopulationWithRandomValues(population, 0);
-        ResetToCurrentGenome();
+        SetCurrentNetwork();
     }
     #endregion
 
@@ -64,9 +65,9 @@ public class GeneticAlgorithmManager : MonoBehaviour
     /// <summary>
     /// Resets the vehicle, and sets the network to the current genome
     /// </summary>
-    private void ResetToCurrentGenome()
+    private void SetCurrentNetwork()
     {
-        controller.ResetWithNetwork(population[currentGenome]);
+        controller.SetCurrentNetworkAndReset(population[currentGenome]);
     }
 
     /// <summary>
@@ -80,7 +81,7 @@ public class GeneticAlgorithmManager : MonoBehaviour
         {
             population[currentGenome].fitness = fitness;
             currentGenome ++;
-            ResetToCurrentGenome();
+            SetCurrentNetwork();
         }
         else
         {
@@ -133,7 +134,7 @@ public class GeneticAlgorithmManager : MonoBehaviour
         population = newPopulation;
         currentGenome = 0;
 
-        ResetToCurrentGenome();
+        SetCurrentNetwork();
     }
     #endregion
 
@@ -283,27 +284,12 @@ public class GeneticAlgorithmManager : MonoBehaviour
             newPopulation[naturallySelected].fitness = 0;
 
             // Weights number of additions to the fitness of the algorithm
-            int f = Mathf.RoundToInt(population[i].fitness * 10);
+            int fitnessWeight = Mathf.RoundToInt(population[i].fitness * 10);
 
-            for (int j = 0; j < f; j++)
+            for (int j = 0; j < fitnessWeight; j++)
             {
                 // Indexes used to reference, minimises time spent on slow copy algorithm
                 genePool.Add(i);
-            }
-        }
-
-        // Going through the worst maintains population diversity
-        for (int i = 0; i < worstAgentSelection; i++)
-        {
-            int last = population.Length - 1 - i;
-
-            // Weights number of additions to the fitness of the algorithm
-            int f = Mathf.RoundToInt(population[last].fitness * 10);
-
-            for (int j = 0; j < f; j++)
-            {
-                // Indexes used to reference, minimises time spent on slow copy algorithm
-                genePool.Add(last);
             }
         }
 

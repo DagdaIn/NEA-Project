@@ -262,20 +262,18 @@ public class Track_Manager_Script : MonoBehaviour
             File.Create(path);
         }
 
-        using (FileStream stream = new FileStream(path, FileMode.Open))
+        using (StreamWriter sw = new StreamWriter(path, false))
         {
-            using (StreamWriter sw = new StreamWriter(stream))
+            string[] toWrite = ReturnSaveData(this.track);
+
+            foreach (string s in toWrite)
             {
-                string[] toWrite = ReturnSaveData(this.track);
-
-                foreach (string s in toWrite)
-                {
-                    sw.Write($"{s}`");
-                }
-
-                sw.Write($"\n");
+                sw.Write($"{s}`");
             }
+
+            sw.Write($"\n");
         }
+        
     }
 
     /// <summary>
@@ -375,7 +373,7 @@ public class Track_Manager_Script : MonoBehaviour
             {
                 foreach (KeyValuePair<char, int> kvp in Walls)
                 {
-                    result.GetPieceByPos(i,j).active_walls[kvp.Key] = stringTrack[i * result.trackMap.GetLength(1) + j + 1][kvp.Value] == '1';
+                        result.GetPieceByPos(i,j).active_walls[kvp.Key] = stringTrack[i * result.trackMap.GetLength(1) + j + 1][kvp.Value] == '1';         
                 }
                 result.GetPieceByPos(i,j).setIndex(int.Parse(stringTrack[i * result.trackMap.GetLength(1) + j + 1].Split(' ')[1]));
             }
@@ -413,7 +411,7 @@ public class Track_Manager_Script : MonoBehaviour
     public string GetTrackName()
     {
         // Will be reworked into a text entry field
-        return "Test";
+        return this.track.name;
     }
 
     private string ReturnActiveWallsAsString(Track track, int x, int y)
